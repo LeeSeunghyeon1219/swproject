@@ -17,7 +17,6 @@ int main(int argc, char *argv[]){
 		exit(0);
 	}
 
-	
 	struct stat frstatbuf;
 	FILE* fr=fopen(argv[1],"r");
 	
