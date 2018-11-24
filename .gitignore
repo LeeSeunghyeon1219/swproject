@@ -1,3 +1,4 @@
 *.o
 myls
-
+myCPWithAttribute
+*.txt
