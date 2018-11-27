@@ -1,6 +1,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include<time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -111,26 +112,26 @@ int main(int argc, char *argv[])
 				{
 					mode_t file_mode;
 					struct tm *tminfo;
-					struct passwd *my_passwd;
-					struct group *my_group;
+					//struct passwd *my_passwd;
+					//struct group *my_group;
 					char buf1[80];
 					if(stat(dp->d_name,&sbuf)==-1)
 					{
 						perror("Error");
 						exit(0);
 					}
-					file_mode=sbuf.st_mode;
+					//file_mode=sbuf.st_mode;
 					//rwx(file_mode);
-					printf("%d ",sbuf.st_nlink);
-					my_passwd=getpwuid(sbuf.st_uid);
-					my_group=getgrgid(sbuf.st_gid);
-					printf("%s ",my_passwd->pw_name);
-					printf("%s ",my_group->gr_name);
-					printf("%d ",file_info.st_size);
+					//printf("%d ",(int)sbuf.st_nlink);
+					//my_passwd=getpwuid(sbuf.st_uid);
+					//my_group=getgrgid(sbuf.st_gid);
+					//printf("%d ",sbuf.st_uid);
+					//printf("%d ",sbuf.st_gid);
+					//printf("%d ",(int)sbuf.st_size);
 					
-					tminfo=localtime((&sbuf.st_atime));
-					strftime(buf1,80,"%m/%d %H:%M",tminfo);
-					printf("%s ",buf1);
+					//tminfo=localtime((&sbuf.st_atime));
+					//strftime(buf1,80,"%m/%d %H:%M",tminfo);
+					//printf("%s ",buf1);
 					
 					if(dp->d_name !=0)
 						printf("%s\n",dp->d_name);
