@@ -119,6 +119,105 @@ void a_option(DIR * dirp)
         }
         printf("\n");
 }
+void l_option(DIR *dirp)
+{
+        struct stat sbuf;
+        struct dirent *dp;
+        
+	if(dirp==NULL)
+        {
+                perror("opendir");
+                exit(0);
+        }
+        else
+        {
+                for(;;)
+                {
+                        dp=readdir(dirp);
+                        if(dp==NULL) 
+                               break;
+                        else
+                        {       
+                                if(strcmp(dp->d_name,".")==0)
+                                        continue;
+                                if(strcmp(dp->d_name,"..")==0)
+                                        continue;
+                                if(strcmp(dp->d_name,".git")==0)
+                                        continue;
+                                if(strcmp(dp->d_name,".gitignore")==0)
+                                        continue;
+                                mode_t file_mode;
+                                struct tm *tminfo;
+                                struct passwd *my_passwd;
+                                struct group *my_group;
+                                char buf1[80];
+                                stat(dp->d_name,&sbuf);
+                                file_mode=sbuf.st_mode;
+                                rwx(file_mode);
+                                printf("%2d ",(int)sbuf.st_nlink);
+                                printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
+                                printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
+                                printf("%5d ",(int)sbuf.st_size);
+                                tminfo=localtime((&sbuf.st_atime));
+                                strftime(buf1,80,"%m/%d %H:%M",tminfo);
+                                printf("%s ",buf1);
+
+                                if(dp->d_name !=0)
+                                        printf("%s\n",dp->d_name);
+                        }
+                }
+        }
+}
+void al_option(DIR *dirp)
+{
+        struct stat sbuf;
+        struct dirent *dp;
+
+        if(dirp==NULL)
+        {
+                perror("opendir");
+                exit(0);
+        }
+        else
+        {
+                for(;;)
+                {
+                        dp=readdir(dirp);
+                        if(dp==NULL) 
+                               break;
+                        else
+                        {
+                                if(strcmp(dp->d_name,".")==0)
+                                        continue;
+                                if(strcmp(dp->d_name,"..")==0)
+                                        continue;
+                                if(strcmp(dp->d_name,".git")==0)
+                                        continue;
+                                if(strcmp(dp->d_name,".gitignore")==0)
+                                        continue;
+                                mode_t file_mode;
+                                struct tm *tminfo;
+                                struct passwd *my_passwd;
+                                struct group *my_group;
+                                char buf1[80];
+                                stat(dp->d_name,&sbuf);
+                                file_mode=sbuf.st_mode;
+                                rwx(file_mode);
+                                printf("%2d ",(int)sbuf.st_nlink);
+                                printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
+                                printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
+                                printf("%5d ",(int)sbuf.st_size);
+                                tminfo=localtime((&sbuf.st_atime));
+                                strftime(buf1,80,"%m/%d %H:%M",tminfo);
+                                printf("%s ",buf1);
+
+                                if(dp->d_name !=0)
+                                        printf("%s\n",dp->d_name);
+                        }
+                }
+        }
+}
+
 int main(int argc, char *argv[])
 {
 	int num=0;
@@ -155,94 +254,8 @@ int main(int argc, char *argv[])
  	else if(num==1)//-a --all
  		a_option(dirp);	
 	else if(num==2)//-l
-	{
-		
-		if(dirp==NULL)
-		{
-			perror("opendir");
-			exit(0);
-		}
-		else
-		{
-			for(;;)
-			{
-				dp=readdir(dirp);
-				if(dp==NULL)
-					break;
-				else
-				{
-                                        if(strcmp(dp->d_name,".")==0)
-                                                continue;
-                                        if(strcmp(dp->d_name,"..")==0)
-                                                continue;
-					if(strcmp(dp->d_name,".git")==0)
-                                                continue;
-                                        if(strcmp(dp->d_name,".gitignore")==0)
-                                                continue;
-
-					mode_t file_mode;
-					struct tm *tminfo;
-					struct passwd *my_passwd;
-					struct group *my_group;
-					char buf1[80];
-					stat(dp->d_name,&sbuf);
-					file_mode=sbuf.st_mode;
-					rwx(file_mode);
-					printf("%2d ",(int)sbuf.st_nlink);
-					printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
-					printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
-					printf("%5d ",(int)sbuf.st_size);
-					tminfo=localtime((&sbuf.st_atime));
-					strftime(buf1,80,"%m/%d %H:%M",tminfo);
-					printf("%s ",buf1);
-					
-					if(dp->d_name !=0)
-						printf("%s\n",dp->d_name);
-					
-				}
-			}
-						
-		}
-	}
+		l_option(dirp);		
 	else if(num==3)
-	{
-                if(dirp==NULL)
-                {
-                        perror("opendir");
-                        exit(0);
-                }
-                else
-                {
-                        for(;;)
-                        {
-                                dp=readdir(dirp);
-                                if(dp==NULL)
-                                        break;
-                                else
-                                {
-                                        mode_t file_mode;
-                                        struct tm *tminfo;
-                                        struct passwd *my_passwd;
-                                        struct group *my_group;
-                                        char buf1[80];
-                                        stat(dp->d_name,&sbuf);
-                                        file_mode=sbuf.st_mode;
-                                        rwx(file_mode);
-                                        printf("%2d ",(int)sbuf.st_nlink);
-                                        printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
-                                        printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
-                                        printf("%5d ",(int)sbuf.st_size);
-                                        tminfo=localtime((&sbuf.st_atime));
-                                        strftime(buf1,80,"%m/%d %H:%M",tminfo);
-                                        printf("%s ",buf1);
-
-                                        if(dp->d_name !=0)
-                                                printf("%s\n",dp->d_name);
-
-                                }
-                        }
-
-		}
 	}
 } 
 
