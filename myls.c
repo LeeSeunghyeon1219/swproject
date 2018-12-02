@@ -63,38 +63,61 @@ void rwx(mode_t filemode)
 }
 void base(DIR *dirp)
 {
-        int num=0;
         struct stat sbuf;
         struct dirent *dp;
         if(dirp==NULL)
+        {
+		perror("opendir");
+                exit(0);
+        }
+        else
+        {
+                for(;;)
                 {
-                        perror("opendir");
-                        exit(0);
-                }
-                else
-                {
-                        for(;;)
+                	dp=readdir(dirp);
+                        if(dp==NULL)
+                        	break;
+                        else
                         {
-                                dp=readdir(dirp);
-                                if(dp==NULL)
-                                        break;
-                                else
-                                {
-                                        if(strcmp(dp->d_name,".")==0)
-                                                continue;
-                                        if(strcmp(dp->d_name,"..")==0)
-                                                continue;
-                                        if(strcmp(dp->d_name,".git")==0)
-                                                continue;
-                                        if(strcmp(dp->d_name,".gitignore")==0)
-                                                continue;
-                                        printf("%s  ",dp->d_name);
-                                        stat(dp->d_name, &sbuf);
-                                }
+                                if(strcmp(dp->d_name,".")==0)
+                        	        continue;
+                                if(strcmp(dp->d_name,"..")==0)
+                                        continue;
+                                if(strcmp(dp->d_name,".git")==0)
+                                        continue;
+                                if(strcmp(dp->d_name,".gitignore")==0)
+                                        continue;
+                                printf("%s  ",dp->d_name);
+                                stat(dp->d_name, &sbuf);
                         }
-                        printf("\n");
                 }
-
+                printf("\n");
+        }
+}
+void a_option(DIR * dirp)
+{
+        struct stat sbuf;
+        struct dirent *dp;
+        if(dirp==NULL)
+        {
+               perror("opendir");
+               exit(0);
+        }
+        else
+        {
+                for(;;)
+                {
+                        dp=readdir(dirp);
+                        if(dp==NULL)
+                                break;
+                        else
+                        {
+                                printf("%s  ",dp->d_name);
+                                stat(dp->d_name, &sbuf);
+                        }
+                 }
+        }
+        printf("\n");
 }
 int main(int argc, char *argv[])
 {
@@ -120,7 +143,7 @@ int main(int argc, char *argv[])
    			num=1;
 		else if(strcmp(argv[1],"-l")==0)
 			num=2;
-		else if(strcmp(argv[1],"-al")==0)
+		else if(strcmp(argv[1],"-al")==0|strcmp(argv[1],"-all")==0)
 			num=3;
  	}
  	else
@@ -130,28 +153,7 @@ int main(int argc, char *argv[])
  	if(num==0)//base
 		base(dirp);
  	else if(num==1)//-a --all
- 	{
-  		if(dirp==NULL)
-  		{
-   			perror("opendir");
-   			exit(0);
- 		 }
-  		else
-  		{
-   			for(;;)
-   			{
-    				dp=readdir(dirp);
-    				if(dp==NULL)
-     					break;
-    				else
-    				{
-     					printf("%s  ",dp->d_name);
-     					stat(dp->d_name, &sbuf);
-    				}
-   			}
-  		}
-  		printf("\n");
- 	}
+ 		a_option(dirp);	
 	else if(num==2)//-l
 	{
 		
