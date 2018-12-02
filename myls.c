@@ -4,6 +4,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include<pwd.h>
 #include <unistd.h>
 #include <string.h>
 #include <grp.h>
@@ -180,8 +181,8 @@ int main(int argc, char *argv[])
 					printf("%d ",(int)sbuf.st_nlink);
 			//		my_passwd=getpwuid(sbuf.st_uid);
 			//		my_group=getgrgid(sbuf.st_gid);
-				//	printf("%s ",sbuf.st_uid);
-				//	printf("%s ",sbuf.st_gid);
+					printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
+					printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
 					printf("%5d ",(int)sbuf.st_size);
 					tminfo=localtime((&sbuf.st_atime));
 					strftime(buf1,80,"%m/%d %H:%M",tminfo);
