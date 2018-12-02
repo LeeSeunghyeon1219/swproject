@@ -10,6 +10,14 @@
 
 #include <dirent.h>
 
+void CopyFile(){
+
+
+
+
+}
+
+
 int main(int argc, char *argv[]){
 
 	if(argc<3){
@@ -33,10 +41,6 @@ int main(int argc, char *argv[]){
 
 		fstat(frfd,&frstatbuf);
 
-//	switch(frstatbuf.st_mode & S_IFMT){
-//		case S_IFREG: printf("regular file\n");
-//			      break;
-//	}
 
 	FILE* fw=fopen(argv[2],"w+");
 
@@ -49,7 +53,6 @@ int main(int argc, char *argv[]){
 
 	int fwfd=fileno(fw);
 
-//	fchmod(fwfd,frstatbuf.st_mode&(S_IRWXU|S_IRWXG|S_IRWXO));
 	fchmod(fwfd,frstatbuf.st_mode);
 	
 	
@@ -57,7 +60,6 @@ int main(int argc, char *argv[]){
 
 	while(1){
 		int n=fread(buf,sizeof(char),SIZE,fr);
-	//	printf("%s\n",buf);
 
 		if(n<SIZE){
 			fwrite(buf,sizeof(char),n,fw);
@@ -82,6 +84,7 @@ int main(int argc, char *argv[]){
 
 
 			//폴더를 읽는다 
+
 			struct dirent * rddir=readdir(inputdir);
 
 			if(rddir==NULL){
