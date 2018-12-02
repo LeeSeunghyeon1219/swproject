@@ -4,7 +4,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include<pwd.h>
+#include <pwd.h>
 #include <unistd.h>
 #include <string.h>
 #include <grp.h>
@@ -30,36 +30,6 @@ void rwx(mode_t filemode)
 	else
 		printf("-");
 	
-	if(filemode & S_IRGRP)
-		printf("r");
-	else
-		printf("-");
-
-	if(filemode & S_IWGRP)
-		printf("w");
-	else
-		printf("-");
-
-	if(filemode & S_IXGRP)
-		printf("x");
-	else
-		printf("-");
-
-	if(filemode & S_IROTH)
-		printf("r");
-	else
-		printf("-");
-
-	if(filemode & S_IWOTH)
-		printf("w");
-	else
-		printf("-");
-
-	if(filemode & S_IXOTH)
-		printf("x");
-	else
-		printf("-");
-	printf(" ");
 }
 void base(DIR *dirp)
 {
