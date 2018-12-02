@@ -119,7 +119,7 @@ void a_option(DIR * dirp)
         }
         printf("\n");
 }
-void l_option(DIR *dirp)
+void al_option(DIR *dirp)
 {
         struct stat sbuf;
         struct dirent *dp;
@@ -138,14 +138,6 @@ void l_option(DIR *dirp)
                                break;
                         else
                         {       
-                                if(strcmp(dp->d_name,".")==0)
-                                        continue;
-                                if(strcmp(dp->d_name,"..")==0)
-                                        continue;
-                                if(strcmp(dp->d_name,".git")==0)
-                                        continue;
-                                if(strcmp(dp->d_name,".gitignore")==0)
-                                        continue;
                                 mode_t file_mode;
                                 struct tm *tminfo;
                                 struct passwd *my_passwd;
@@ -168,7 +160,7 @@ void l_option(DIR *dirp)
                 }
         }
 }
-void al_option(DIR *dirp)
+void l_option(DIR *dirp)
 {
         struct stat sbuf;
         struct dirent *dp;
@@ -256,7 +248,7 @@ int main(int argc, char *argv[])
 	else if(num==2)//-l
 		l_option(dirp);		
 	else if(num==3)
-	}
+		al_option(dirp);	
 } 
 
 
