@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 					stat(dp->d_name,&sbuf);
 					file_mode=sbuf.st_mode;
 					rwx(file_mode);
-					printf("%d ",(int)sbuf.st_nlink);
+					printf("%2d ",(int)sbuf.st_nlink);
 					printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
 					printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
 					printf("%5d ",(int)sbuf.st_size);
@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
                                         stat(dp->d_name,&sbuf);
                                         file_mode=sbuf.st_mode;
                                         rwx(file_mode);
-                                        printf("%d ",(int)sbuf.st_nlink);
+                                        printf("%2d ",(int)sbuf.st_nlink);
                                         printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
                                         printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
                                         printf("%5d ",(int)sbuf.st_size);
