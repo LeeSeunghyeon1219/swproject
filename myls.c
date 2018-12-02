@@ -61,6 +61,41 @@ void rwx(mode_t filemode)
 		printf("-");
 	printf(" ");
 }
+void base(DIR *dirp)
+{
+        int num=0;
+        struct stat sbuf;
+        struct dirent *dp;
+        if(dirp==NULL)
+                {
+                        perror("opendir");
+                        exit(0);
+                }
+                else
+                {
+                        for(;;)
+                        {
+                                dp=readdir(dirp);
+                                if(dp==NULL)
+                                        break;
+                                else
+                                {
+                                        if(strcmp(dp->d_name,".")==0)
+                                                continue;
+                                        if(strcmp(dp->d_name,"..")==0)
+                                                continue;
+                                        if(strcmp(dp->d_name,".git")==0)
+                                                continue;
+                                        if(strcmp(dp->d_name,".gitignore")==0)
+                                                continue;
+                                        printf("%s  ",dp->d_name);
+                                        stat(dp->d_name, &sbuf);
+                                }
+                        }
+                        printf("\n");
+                }
+
+}
 int main(int argc, char *argv[])
 {
 	int num=0;
@@ -93,36 +128,7 @@ int main(int argc, char *argv[])
 
 
  	if(num==0)//base
- 	{
-  		if(dirp==NULL)
-  		{
-   			perror("opendir");
-   			exit(0);
-  		}
-  		else
-  		{
-   			for(;;)
-   			{
-    				dp=readdir(dirp);
-    				if(dp==NULL)
-     					break;
-    				else
-    				{
-     					if(strcmp(dp->d_name,".")==0)
-      						continue;
-     					if(strcmp(dp->d_name,"..")==0)
-       						continue;
-     					if(strcmp(dp->d_name,".git")==0)
-      						continue;
-     					if(strcmp(dp->d_name,".gitignore")==0)
-      						continue;
-     					printf("%s  ",dp->d_name);	
-     					stat(dp->d_name, &sbuf);
-    				}
-   			}
-   			printf("\n");  
-  		}
- 	}
+		base(dirp);
  	else if(num==1)//-a --all
  	{
   		if(dirp==NULL)
