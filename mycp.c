@@ -84,9 +84,11 @@ int main(int argc, char *argv[]){
 
 
 			//폴더를 읽는다 
+			
+			while(1){
 
 			struct dirent * rddir=readdir(inputdir);
-
+		
 			if(rddir==NULL){
 				//directory stream 끝에 도달하거나 에러 발생하면 0
 				exit(0);
@@ -95,7 +97,7 @@ int main(int argc, char *argv[]){
 			printf("%s\n",rddir->d_name);
 
 			}
-
+		}
 		}
 
 	return 0;
