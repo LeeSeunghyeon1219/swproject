@@ -85,6 +85,8 @@ int main(int argc, char *argv[])
    			num=1;
 		else if(strcmp(argv[1],"-l")==0)
 			num=2;
+		else if(strcmp(argv[1],"-al")==0)
+			num=3;
  	}
  	else
   		dirp=opendir(".");
@@ -144,7 +146,7 @@ int main(int argc, char *argv[])
   		}
   		printf("\n");
  	}
-	else //-l
+	else if(num==2)//-l
 	{
 		
 		if(dirp==NULL)
@@ -179,8 +181,6 @@ int main(int argc, char *argv[])
 					file_mode=sbuf.st_mode;
 					rwx(file_mode);
 					printf("%d ",(int)sbuf.st_nlink);
-			//		my_passwd=getpwuid(sbuf.st_uid);
-			//		my_group=getgrgid(sbuf.st_gid);
 					printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
 					printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
 					printf("%5d ",(int)sbuf.st_size);
@@ -194,6 +194,46 @@ int main(int argc, char *argv[])
 				}
 			}
 						
+		}
+	}
+	else if(num==3)
+	{
+                if(dirp==NULL)
+                {
+                        perror("opendir");
+                        exit(0);
+                }
+                else
+                {
+                        for(;;)
+                        {
+                                dp=readdir(dirp);
+                                if(dp==NULL)
+                                        break;
+                                else
+                                {
+                                        mode_t file_mode;
+                                        struct tm *tminfo;
+                                        struct passwd *my_passwd;
+                                        struct group *my_group;
+                                        char buf1[80];
+                                        stat(dp->d_name,&sbuf);
+                                        file_mode=sbuf.st_mode;
+                                        rwx(file_mode);
+                                        printf("%d ",(int)sbuf.st_nlink);
+                                        printf("%s ",getpwuid(sbuf.st_uid)->pw_name);
+                                        printf("%s ",getgrgid(sbuf.st_gid)->gr_name);
+                                        printf("%5d ",(int)sbuf.st_size);
+                                        tminfo=localtime((&sbuf.st_atime));
+                                        strftime(buf1,80,"%m/%d %H:%M",tminfo);
+                                        printf("%s ",buf1);
+
+                                        if(dp->d_name !=0)
+                                                printf("%s\n",dp->d_name);
+
+                                }
+                        }
+
 		}
 	}
 } 
