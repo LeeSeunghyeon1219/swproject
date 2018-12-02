@@ -247,8 +247,8 @@ int main(int argc, char *argv[])
  		a_option(dirp);	
 	else if(num==2)//-l
 		l_option(dirp);		
-	else if(num==3)
-		al_option(dirp);	
+//	else if(num==3)
+//		al_option(dirp);	
 } 
 
 
