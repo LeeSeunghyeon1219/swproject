@@ -10,39 +10,25 @@
 
 #include <dirent.h>
 
-void CopyFile(){
+void CopyFile(char* inputFile, char* outputFile){
 
+//파일 복사하기
+	printf("파일 복사\n");
 
-
-
-}
-
-
-int main(int argc, char *argv[]){
-
-	if(argc<3){
-		perror("argument 부족\n");
+	struct stat frstatbuf;
+	FILE* fr=fopen(inputFile,"r");
+	
+	if(fr==NULL){
+		perror("read file 읽기 오류\n");
 		exit(0);
 	}
-	
-	if(argc==3){
-		//파일 복사하기
-		printf("파일 복사\n");
 
-		struct stat frstatbuf;
-		FILE* fr=fopen(argv[1],"r");
-	
-		if(fr==NULL){
-			perror("read file 읽기 오류\n");
-			exit(0);
-		}
+	int frfd=fileno(fr);
 
-		int frfd=fileno(fr);
-
-		fstat(frfd,&frstatbuf);
+	fstat(frfd,&frstatbuf);
 
 
-	FILE* fw=fopen(argv[2],"w+");
+	FILE* fw=fopen(outputFile,"w+");
 
 	
 	if(fw==NULL){
@@ -73,6 +59,20 @@ int main(int argc, char *argv[]){
 	 fclose(fr);
 	 fclose(fw);
 
+
+
+}
+
+
+int main(int argc, char *argv[]){
+
+	if(argc<3){
+		perror("argument 부족\n");
+		exit(0);
+	}
+	
+	if(argc==3){
+		CopyFile(argv[1],argv[2]); 
 	}
 
 	if(argc==4){
