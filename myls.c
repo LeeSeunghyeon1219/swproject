@@ -7,6 +7,59 @@
 #include <unistd.h>
 #include <string.h>
 #include <grp.h>
+void rwx(mode_t filemode)
+{
+	if(S_ISDIR(filemode))
+		printf("d");
+	else
+		printf("-");
+	
+	if(filemode & S_IRUSR)
+		printf("r");
+	else
+		printf("-");
+		
+	if(filemode & S_IWUSR)
+		printf("w");
+	else
+		printf("-");
+
+	if(filemode & S_IXUSR)
+		printf("x");
+	else
+		printf("-");
+	
+	if(filemode & S_IRGRP)
+		printf("r");
+	else
+		printf("-");
+
+	if(filemode & S_IWGRP)
+		printf("w");
+	else
+		printf("-");
+
+	if(filemode & S_IXGRP)
+		printf("x");
+	else
+		printf("-");
+
+	if(filemode & S_IROTH)
+		printf("r");
+	else
+		printf("-");
+
+	if(filemode & S_IWOTH)
+		printf("w");
+	else
+		printf("-");
+
+	if(filemode & S_IXOTH)
+		printf("x");
+	else
+		printf("-");
+	printf(" ");
+}
 int main(int argc, char *argv[])
 {
 	int num=0;
@@ -111,6 +164,10 @@ int main(int argc, char *argv[])
                                                 continue;
                                         if(strcmp(dp->d_name,"..")==0)
                                                 continue;
+					if(strcmp(dp->d_name,".git")==0)
+                                                continue;
+                                        if(strcmp(dp->d_name,".gitignore")==0)
+                                                continue;
 
 					mode_t file_mode;
 					struct tm *tminfo;
@@ -119,13 +176,13 @@ int main(int argc, char *argv[])
 					char buf1[80];
 					stat(dp->d_name,&sbuf);
 					file_mode=sbuf.st_mode;
-					//rwx(file_mode);
+					rwx(file_mode);
 					printf("%d ",(int)sbuf.st_nlink);
 			//		my_passwd=getpwuid(sbuf.st_uid);
 			//		my_group=getgrgid(sbuf.st_gid);
 				//	printf("%s ",sbuf.st_uid);
 				//	printf("%s ",sbuf.st_gid);
-					printf("%d ",(int)sbuf.st_size);
+					printf("%5d ",(int)sbuf.st_size);
 					tminfo=localtime((&sbuf.st_atime));
 					strftime(buf1,80,"%m/%d %H:%M",tminfo);
 					printf("%s ",buf1);
