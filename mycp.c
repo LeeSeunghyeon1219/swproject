@@ -28,7 +28,6 @@ void CopyFile(char* inputFile, char* outputFile){
 
 	fstat(frfd,&frstatbuf);
 
-
 	FILE* fw=fopen(outputFile,"w+");
 
 	
@@ -36,7 +35,6 @@ void CopyFile(char* inputFile, char* outputFile){
 		perror("write file 열기 오류\n");
 		exit(0);
 	}
-	
 
 	int fwfd=fileno(fw);
 
@@ -60,8 +58,6 @@ void CopyFile(char* inputFile, char* outputFile){
 	 fclose(fr);
 	 fclose(fw);
 
-
-
 }
 
 
@@ -81,10 +77,9 @@ int main(int argc, char *argv[]){
 			printf("폴더복사\n");
 			
 			DIR* inputdir;
-			inputdir=opendir(argv[2]); //폴더를 연다
-
-
-			//폴더를 읽는다 
+			inputdir=opendir(argv[2]); //input 폴더를 연다
+	
+			//input폴더를 읽는다 
 			
 			while(1){
 
@@ -96,60 +91,50 @@ int main(int argc, char *argv[]){
 			}
 
 
-			
-			//stat을 통해 파일 종류 확인하기 
-			struct stat buf;
-			stat(rddir->d_name,&buf);
-			
-			int flag=0;
-
 			//파일인지 폴더인지 확인
-			switch (buf.st_mode & S_IFMT){
-			 case S_IFBLK:  printf("block device\n");            						flag=0; break;
-          		 case S_IFCHR:  printf("character device\n");        						flag=1; break;
-           		 case S_IFDIR:  printf("directory: ");
-printf("%s\n",rddir->d_name);	
-					printf("----------------\n");
-				
-					flag=2; break;
-           		 case S_IFIFO:  printf("FIFO/pipe\n");               						flag=3; break;
-           		 case S_IFLNK:  printf("symlink\n");                 						flag=4; break;
-           		 case S_IFREG:  printf("regular file : ");  
-					printf("%s\n",rddir->d_name);
-					printf("-----------------\n");
-          				flag=5; break;
- 		         case S_IFSOCK: printf("socket\n");                  						flag=6; break;
-           		 default:       printf("unknown?\n");                						flag=7; break;
-
-
-			}
-			//입력 폴더를 복제할 출력 폴더를 만든다.
+		
+			if(rddir->d_type == DT_DIR){
+				//폴더이다.
+				printf("폴더입니다\n");
+			//input 폴더를 복제할 output 폴더를 만든다.
 		 	
-			int mkdirFlag=mkdir(argv[3],777); //폴더 만들
-			if(mkdirFlag==0){
-			//폴더 만들기 성공
-			chmod(argv[3],buf.st_mode); //폴더 권한을 똑같이 설정
-			}
-			else{
-				perror("폴더를 만들지 못하였습니다.\n");
-				printf("%d: %s\n",errno,strerror(errno));
-				
-				exit(0);
-			}
-			//정상적으로 입력 폴더를 읽었으면 폴더 속 파일이름  출력
-			if(flag==2){
-			//폴더이므로 폴더를 만든다. 이 폴더 안의 파일도 확인한다.
-			//재귀함수 
-			}
+				int mkdirFlag=mkdir(argv[3],755); //ouput폴더 만들
 			
-			if(flag==5){
-			//파일이므로 파일을 복사한다.
-			printf("%s\n",rddir->d_name);
+				if(mkdirFlag==0){
+					//폴더 만들기 성공
+					//stat을 통해 파일 종류 확인하기 
+					struct stat buf;
+					stat(argv[2],&buf);
 			
-			char* outputFile=strcat(argv[3],"\\");
-			outputFile=strcat(outputFile,rddir->d_name);
+					chmod(argv[3],buf.st_mode); 
+					//폴더 권한을 똑같이 설정
+					}
 
-			CopyFile(rddir->d_name,outputFile);
+				else{
+					perror("폴더를 만들지 못하였습니다.\n");
+					printf("%d: %s\n",errno,strerror(errno));
+				
+					exit(0);
+					}
+
+
+				//폴더 복사를 위해서 재귀함수를 호출한다.
+
+				}
+		else if(rddir->d_type==DT_REG){
+				//regular file이면 파일복사를 한다.
+
+				//파일 이름을 출력한다.
+				printf("파일 입니다 : %s\n",rddir->d_name);
+			
+				
+
+				//output 폴더의 경로를 설정해준다.
+				char* outputFile=strcat(argv[3],"\\");
+				
+				outputFile=strcat(outputFile,rddir->d_name);
+				//파일 복사 함수를 호출한다.
+				CopyFile(rddir->d_name,outputFile);
 			}
 		}
 		}
