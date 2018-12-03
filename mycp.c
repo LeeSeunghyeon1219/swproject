@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
-
+#include <errno.h>
 
 void CopyFile(char* inputFile, char* outputFile){
 
@@ -125,9 +125,17 @@ printf("%s\n",rddir->d_name);
 			}
 			//입력 폴더를 복제할 출력 폴더를 만든다.
 		 	
-			mkdir(argv[3],777); //폴더 만들
+			int mkdirFlag=mkdir(argv[3],777); //폴더 만들
+			if(mkdirFlag==0){
+			//폴더 만들기 성공
 			chmod(argv[3],buf.st_mode); //폴더 권한을 똑같이 설정
-
+			}
+			else{
+				perror("폴더를 만들지 못하였습니다.\n");
+				printf("%d: %s\n",errno,strerror(errno));
+				
+				exit(0);
+			}
 			//정상적으로 입력 폴더를 읽었으면 폴더 속 파일이름  출력
 			if(flag==2){
 			//폴더이므로 폴더를 만든다. 이 폴더 안의 파일도 확인한다.
