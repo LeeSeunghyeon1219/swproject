@@ -15,7 +15,7 @@ void CopyFile(char* inputFile, char* outputFile){
 
 //파일 복사하기
 	printf("파일 복사\n");
-
+	printf("inputFile: %s, outputFile: %s \n",inputFile,outputFile);
 	struct stat frstatbuf;
 	FILE* fr=fopen(inputFile,"r");
 	
@@ -97,17 +97,13 @@ int main(int argc, char *argv[]){
 				//폴더이다.
 				printf("폴더입니다\n");
 			//input 폴더를 복제할 output 폴더를 만든다.
-		 	
-				int mkdirFlag=mkdir(argv[3],755); //ouput폴더 만들
+		 			struct stat buf;
+					stat(argv[2],&buf);
+				int mkdirFlag=mkdir(argv[3],buf.st_mode); 
+				
 			
 				if(mkdirFlag==0){
-					//폴더 만들기 성공
-					//stat을 통해 파일 종류 확인하기 
-					struct stat buf;
-					stat(argv[2],&buf);
-			
-					chmod(argv[3],buf.st_mode); 
-					//폴더 권한을 똑같이 설정
+					printf("output 폴더 만들기 성공하였습니다.\n");
 					}
 
 				else{
@@ -127,14 +123,15 @@ int main(int argc, char *argv[]){
 				//파일 이름을 출력한다.
 				printf("파일 입니다 : %s\n",rddir->d_name);
 			
-				
-
+				//input 폴더의 경로를 설정해준다.
+				char* inputFile=strcat(argv[2],"\\");
+				inputFile=strcat(inputFile,rddir->d_name);
 				//output 폴더의 경로를 설정해준다.
 				char* outputFile=strcat(argv[3],"\\");
 				
 				outputFile=strcat(outputFile,rddir->d_name);
 				//파일 복사 함수를 호출한다.
-				CopyFile(rddir->d_name,outputFile);
+				CopyFile(inputFile,outputFile);
 			}
 		}
 		}
