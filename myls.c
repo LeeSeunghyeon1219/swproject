@@ -202,7 +202,7 @@ void base(DIR *dirp)
  	struct dirent *dp;
  
  	 //compare argc
- 	if (argc != 1 & argc!=2)
+ 	if (argc != 1 & argc!=2 & argc !=3)
  	{
  		fprintf(stderr,"usage myls dirname\n");
  		exit(0);
@@ -221,6 +221,23 @@ void base(DIR *dirp)
  		else if(strcmp(argv[1],"-al")==0|strcmp(argv[1],"-all")==0)
  			num=3;
   	}
+	else if(argc==3)
+	{
+                if(strcmp(argv[1],"..")==0|strcmp(argv[2],"..")==0)
+                        dirp=opendir("..");
+		else
+			dirp=opendir(".");
+		
+		if((strcmp(argv[1],"-a")==0&strcmp(argv[2],"-l")==0)|(strcmp(argv[2],"-a")==0&strcmp(argv[1],"-l")==0))
+			num=3;
+                else if(strcmp(argv[1],"-a")==0|strcmp(argv[1],"--all")==0|strcmp(argv[2],"-a")==0|strcmp(argv[2],"--all")==0)
+                        num=1;
+                else if(strcmp(argv[1],"-l")==0|strcmp(argv[2],"-l")==0)
+                        num=2;
+                else if(strcmp(argv[1],"-al")==0|strcmp(argv[1],"-all")==0|strcmp(argv[2],"-al")==0|strcmp(argv[2],"-all")==0)
+                        num=3;
+
+	}
   	else
    		dirp=opendir(".");
  
