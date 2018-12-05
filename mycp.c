@@ -49,8 +49,9 @@ void CopyFile(char* inputFile, char* outputFile){
 		if(n<SIZE){
 			fwrite(buf,sizeof(char),n,fw);
 			printf("파일을 다 읽었음\n");
-			exit(0);
-		}
+			//exit(0);
+			return ;		
+	}
 
 		fwrite(buf,sizeof(char),n,fw);
 	}
@@ -111,6 +112,8 @@ int main(int argc, char *argv[]){
 		
 			if(rddir==NULL){
 				//directory stream 끝에 도달하거나 에러 발생하면 0
+			
+				printf("mycp끝\n");
 				exit(0);
 			}
 
@@ -119,6 +122,13 @@ int main(int argc, char *argv[]){
 		
 			if(rddir->d_type == DT_DIR){
 				//폴더이다.
+
+				if(strcmp(rddir->d_name,".")==0 || strcmp(rddir->d_name,"..")==0){
+				}
+
+				else{
+				printf("폴더명: %s",rddir->d_name);
+			
 				printf("폴더입니다\n");
 			//input 폴더를 복제할 output 폴더를 만든다.
 		 			struct stat buf;
@@ -140,7 +150,7 @@ int main(int argc, char *argv[]){
 
 				//폴더 복사를 위해서 재귀함수를 호출한다.
 
-				}
+				}}
 		else if(rddir->d_type==DT_REG){
 				//regular file이면 파일복사를 한다.
 
