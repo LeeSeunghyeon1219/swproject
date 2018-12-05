@@ -150,17 +150,27 @@ int main(int argc, char *argv[]){
 				//input 폴더의 경로를 설정해준다.
 			
 				//char* inputFile=(rddir->d_name);
-				char* inputFile=strcat("./",argv[2]);
-				inputFile=strcat(inputFile,"/");
-				inputFile=strcat(inputFile,rddir->d_name);
+		
+				char inputFile[50];
+				inputFile[0]='\0';
+
+				strcat(inputFile,"./");
+				
+				strcat(inputFile,argv[2]);
+				strcat(inputFile,"/");
+				strcat(inputFile,rddir->d_name);
 
 				printf("%s\n",inputFile);
 				//output 폴더의 경로를 설정해준다.
 
-				//char* outputFile=(outrddir->d_name);
-				char* outputFile=strcat("./",argv[3]);
-				outputFile=strcat(outputFile,"/");
-				outputFile=strcat(outputFile,rddir->d_name);
+				char outputFile[50];
+				outputFile[0]='\0';
+
+				strcat(outputFile,"./");
+
+				strcat(outputFile,argv[3]);
+				strcat(outputFile,"/");
+				strcat(outputFile,rddir->d_name);
 
 				//파일 복사 함수를 호출한다.
 				CopyFile(inputFile,outputFile);
