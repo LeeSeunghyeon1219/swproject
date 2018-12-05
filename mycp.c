@@ -81,9 +81,33 @@ int main(int argc, char *argv[]){
 	
 			//input폴더를 읽는다 
 			
+			//input 폴더를 복제할 output 폴더를 만든다.
+		 	struct stat buf;
+			stat(argv[2],&buf);
+			int mkdirFlag=mkdir(argv[3],buf.st_mode); 
+
+
+
+			if(mkdirFlag==0){
+				printf("output 폴더 만들기 성공하였습니다.\n");
+				
+			}
+
+			else{
+				perror("폴더를 만들지 못하였습니다.\n");
+				printf("%d: %s\n",errno,strerror(errno));
+				
+				exit(0);
+				}
+
+
+				DIR* outputdir;
+				outputdir=opendir(argv[3]);
+
 			while(1){
 
 			struct dirent * rddir=readdir(inputdir);
+			struct dirent * outrddir=readdir(outputdir);
 		
 			if(rddir==NULL){
 				//directory stream 끝에 도달하거나 에러 발생하면 0
@@ -98,8 +122,8 @@ int main(int argc, char *argv[]){
 				printf("폴더입니다\n");
 			//input 폴더를 복제할 output 폴더를 만든다.
 		 			struct stat buf;
-					stat(argv[2],&buf);
-				int mkdirFlag=mkdir(argv[3],buf.st_mode); 
+					stat(rddir->d_name,&buf);
+				int mkdirFlag=mkdir(rddir->d_name,buf.st_mode); 
 				
 			
 				if(mkdirFlag==0){
@@ -124,12 +148,20 @@ int main(int argc, char *argv[]){
 				printf("파일 입니다 : %s\n",rddir->d_name);
 			
 				//input 폴더의 경로를 설정해준다.
-				char* inputFile=strcat(argv[2],"\\");
+			
+				//char* inputFile=(rddir->d_name);
+				char* inputFile=strcat("./",argv[2]);
+				inputFile=strcat(inputFile,"/");
 				inputFile=strcat(inputFile,rddir->d_name);
+
+				printf("%s\n",inputFile);
 				//output 폴더의 경로를 설정해준다.
-				char* outputFile=strcat(argv[3],"\\");
-				
+
+				//char* outputFile=(outrddir->d_name);
+				char* outputFile=strcat("./",argv[3]);
+				outputFile=strcat(outputFile,"/");
 				outputFile=strcat(outputFile,rddir->d_name);
+
 				//파일 복사 함수를 호출한다.
 				CopyFile(inputFile,outputFile);
 			}
