@@ -11,6 +11,14 @@
 #include <string.h>
 #include <errno.h>
 
+
+
+char inputFile[50];
+char outputFile[50];
+				
+
+
+		
 void CopyFile(char* inputFile, char* outputFile){
 
 //파일 복사하기
@@ -61,6 +69,86 @@ void CopyFile(char* inputFile, char* outputFile){
 
 }
 
+int folderCopy(DIR* inputdir,DIR* outputdir){
+
+
+			while(1){
+
+			struct dirent * rddir=readdir(inputdir);
+			struct dirent * outrddir=readdir(outputdir);
+		
+			if(rddir==NULL){
+				//directory stream 끝에 도달하거나 에러 발생하면 0
+			
+				printf("mycp끝\n");
+				return 1;
+			}
+
+
+			//파일인지 폴더인지 확인
+		
+			if(rddir->d_type == DT_DIR){
+				//폴더이다.
+
+				if(strcmp(rddir->d_name,".")==0 || strcmp(rddir->d_name,"..")==0){
+				//do nothing.
+				}
+
+				else{
+
+
+				printf("폴더명: %s",rddir->d_name);
+			
+				printf("폴더입니다\n");
+			//input 폴더를 복제할 output 폴더를 만든다.
+		 			struct stat buf;
+					stat(rddir->d_name,&buf);
+				int mkdirFlag=mkdir(rddir->d_name,buf.st_mode); 
+				
+			
+				if(mkdirFlag==0){
+					printf("output 폴더 만들기 성공하였습니다.\n");
+					}
+
+				else{
+					printf("폴더명: %s", outputFile);
+					perror("폴더를 만들지 못하였습니다.\n");
+					printf("%d: %s\n",errno,strerror(errno));
+				
+					return 0;
+					}
+
+
+				//폴더 복사를 위해서 재귀함수를 호출한다.
+
+				}}
+		else if(rddir->d_type==DT_REG){
+				//regular file이면 파일복사를 한다.
+
+				//파일 이름을 출력한다.
+				printf("파일 입니다 : %s\n",rddir->d_name);
+			
+				//input 폴더의 경로를 설정해준다.
+			
+				//char* inputFile=(rddir->d_name);
+				
+				strcat(inputFile,"/");
+				strcat(inputFile,rddir->d_name);
+
+				printf("%s\n",inputFile);
+				//output 폴더의 경로를 설정해준다.
+
+				strcat(outputFile,"/");
+				strcat(outputFile,rddir->d_name);
+
+				//파일 복사 함수를 호출한다.
+				CopyFile(inputFile,outputFile);
+			}
+	}
+	return 1;
+
+}
+
 
 int main(int argc, char *argv[]){
 
@@ -99,96 +187,33 @@ int main(int argc, char *argv[]){
 				printf("%d: %s\n",errno,strerror(errno));
 				
 				exit(0);
-				}
+			}
 
 
 				DIR* outputdir;
 				outputdir=opendir(argv[3]);
-
-			while(1){
-
-			struct dirent * rddir=readdir(inputdir);
-			struct dirent * outrddir=readdir(outputdir);
-		
-			if(rddir==NULL){
-				//directory stream 끝에 도달하거나 에러 발생하면 0
-			
-				printf("mycp끝\n");
-				exit(0);
-			}
-
-
-			//파일인지 폴더인지 확인
-		
-			if(rddir->d_type == DT_DIR){
-				//폴더이다.
-
-				if(strcmp(rddir->d_name,".")==0 || strcmp(rddir->d_name,"..")==0){
-				}
-
-				else{
-				printf("폴더명: %s",rddir->d_name);
-			
-				printf("폴더입니다\n");
-			//input 폴더를 복제할 output 폴더를 만든다.
-		 			struct stat buf;
-					stat(rddir->d_name,&buf);
-				int mkdirFlag=mkdir(rddir->d_name,buf.st_mode); 
 				
-			
-				if(mkdirFlag==0){
-					printf("output 폴더 만들기 성공하였습니다.\n");
-					}
-
-				else{
-					perror("폴더를 만들지 못하였습니다.\n");
-					printf("%d: %s\n",errno,strerror(errno));
-				
-					exit(0);
-					}
-
-
-				//폴더 복사를 위해서 재귀함수를 호출한다.
-
-				}}
-		else if(rddir->d_type==DT_REG){
-				//regular file이면 파일복사를 한다.
-
-				//파일 이름을 출력한다.
-				printf("파일 입니다 : %s\n",rddir->d_name);
-			
-				//input 폴더의 경로를 설정해준다.
-			
-				//char* inputFile=(rddir->d_name);
-		
-				char inputFile[50];
 				inputFile[0]='\0';
 
 				strcat(inputFile,"./");
 				
 				strcat(inputFile,argv[2]);
-				strcat(inputFile,"/");
-				strcat(inputFile,rddir->d_name);
-
-				printf("%s\n",inputFile);
-				//output 폴더의 경로를 설정해준다.
-
-				char outputFile[50];
+				
 				outputFile[0]='\0';
 
 				strcat(outputFile,"./");
 
 				strcat(outputFile,argv[3]);
-				strcat(outputFile,"/");
-				strcat(outputFile,rddir->d_name);
-
-				//파일 복사 함수를 호출한다.
-				CopyFile(inputFile,outputFile);
-			}
+				
+				int res=folderCopy(inputdir,outputdir);
+				if(res==0){
+					printf("cp실패!\n");
+				}
+				else{
+					printf("cp성공!\n");
+				}	}
 		}
-		}
-		}
-
+		
 	return 0;
 
 }
