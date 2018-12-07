@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include <sys/types.h>
  #include<sys/stat.h>
  #include <dirent.h>
@@ -8,12 +9,14 @@
  #include <unistd.h>
  #include <string.h>
  #include <grp.h>
+ #define SZ_BUF 1024
 int main(int argc, char * argv[])
 {
-	int fd_in;
+	int fd_in,fr;
 	struct stat sbuf;
 	DIR *dirp;
 	struct dirent *dp;
+	char buf[SZ_BUF];
 	mode_t file_mode;
 	int num=0;
 	if(argc ==1)
@@ -42,7 +45,15 @@ int main(int argc, char * argv[])
 		printf("There is no file in here!\n");
 	else if(num==2)
 		printf("Directory name!\n");
-	else//right;
+	//print 
+	for(int i=1;i<argc;i++)
 	{
-	}		
+		fd_in=open(argv[1], O_RDONLY);
+		while(fr=read(0,buf,SZ_BUF))
+		{
+			write(1,buf,fr);
+			memset(buf,0,sizeof(buf));
+		}
+	}
+			
 }
