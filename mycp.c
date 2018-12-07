@@ -16,8 +16,13 @@
 char inputFile[50];
 char outputFile[50];
 				
+char inbuf[1024];
+char outbuf[1024];
+				
 
-
+char intemp[1024];							
+char outtemp[1024];
+				
 		
 void CopyFile(char* inputFile, char* outputFile){
 
@@ -75,12 +80,9 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 			while(1){
 
 			struct dirent * rddir=readdir(inputdir);
-			printf("나임? :%s\n",rddir->d_name);
-
+			
 			struct dirent * outrddir=readdir(outputdir);
 			
-			printf("오류 나임? :%s\n",rddir->d_name);
-
 		
 			if(rddir==NULL){
 				//directory stream 끝에 도달하거나 에러 발생하면 0
@@ -99,6 +101,8 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				//do nothing.
 				}
 
+				
+
 				else{
 
 
@@ -109,8 +113,6 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 
 				//폴더 복사를 위해서 재귀함수를 호출한다.
 				
-				char inbuf[1024];
-				char outbuf[1024];
 				
 				sprintf(inbuf,"%s/%s",inputFile,rddir->d_name);
 				sprintf(outbuf,"%s/%s",outputFile,rddir->d_name);
@@ -127,6 +129,12 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 			
 				if(mkdirFlag==0){
 					printf("output 폴더 만들기 성공하였습니다.\n");
+					//서브 폴더 경로도 붙여주기
+					strcpy(intemp,inputFile);
+					strcpy(outtemp,outputFile);
+
+					strcpy(inputFile,inbuf);
+					strcpy(outputFile,outbuf);
 					}
 
 				else{
@@ -142,6 +150,10 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				DIR* outdir=opendir(outbuf);
 
 				folderCopy(indir,outdir);
+				
+				//재귀함수 빠져나오면 서브 폴더 경로 빼주기
+				strcpy(inputFile,intemp);
+				strcpy(outputFile,outtemp);
 
 
 				}}
