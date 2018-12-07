@@ -30,6 +30,7 @@ int mycat(int argc, char * argv[])
         dirp=opendir(".");
         for(int i=1;i<argc;i++)
         {
+		printf("%s\n",argv[i]);
                   int s=stat(argv[i],&sbuf);
                   if(s==-1)
                   {
@@ -44,10 +45,15 @@ int mycat(int argc, char * argv[])
                   }
         }
         if(num==1)
+	{
                 printf("There is no file in here!\n");
-        else if(num==2)
+        	return 0;
+	}
+	else if(num==2)
+	{
                 printf("Directory name!\n");
-
+		return 0;
+	}
         //open file and write terminal
         for(int i=1;i<argc;i++)
         {
@@ -71,7 +77,6 @@ int main(void)
 	while(1)
 	{
 		fgets(cmdString,STR_LEN,stdin);
-		tokenNum++;
 		token=strtok(cmdString,delim);
 		while(token)
 		{
@@ -79,12 +84,11 @@ int main(void)
 			strcpy(cmdTokenList[tokenNum],token);
 			token=strtok(NULL,delim);
 			
-			printf("%d : %s\n",tokenNum,cmdTokenList[tokenNum]);
 			tokenNum++;
 		}
 		
 	 	if(strcmp(cmdTokenList[0],"cat")==0)
-			mycat(tokenNum,cmdTokenList);	
+			mycat(tokenNum+1,cmdTokenList);	
 		tokenNum=0;	
 	}	
 }
