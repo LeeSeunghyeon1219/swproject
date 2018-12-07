@@ -120,6 +120,18 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 
 
 				//폴더 복사를 위해서 재귀함수를 호출한다.
+				
+				char inbuf[1024];
+				char outbuf[1024];
+
+				sprintf(inbuf,"%s/%s",inputFile,rddir->d_name);
+				sprintf(outbuf,"%s/%s",outputFile,rddir->d_name);
+
+				DIR* indir=opendir(inbuf);
+				DIR* outdir=opendir(outbuf);
+				
+				folderCopy(indir,outdir);
+
 
 				}}
 		else if(rddir->d_type==DT_REG){
@@ -133,16 +145,23 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				//char* inputFile=(rddir->d_name);
 				
 				strcat(inputFile,"/");
-				strcat(inputFile,rddir->d_name);
+				
+				char ref[1024];
 
-				printf("%s\n",inputFile);
+				sprintf(ref,"%s%s",inputFile,rddir->d_name);
+
+
+				printf("%s\n",ref);
 				//output 폴더의 경로를 설정해준다.
+				
+				char outref[1024];
 
 				strcat(outputFile,"/");
-				strcat(outputFile,rddir->d_name);
-
+				sprintf(outref,"%s%s",outputFile,rddir->d_name);
 				//파일 복사 함수를 호출한다.
-				CopyFile(inputFile,outputFile);
+
+				
+				CopyFile(ref,outref);
 			}
 	}
 	return 1;
