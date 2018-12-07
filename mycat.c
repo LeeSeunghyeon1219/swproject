@@ -45,6 +45,7 @@ int main(int argc, char * argv[])
 		printf("There is no file in here!\n");
 	else if(num==2)
 		printf("Directory name!\n");
+
 	//open file and write terminal
 	for(int i=1;i<argc;i++)
 	{
