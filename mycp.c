@@ -75,7 +75,12 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 			while(1){
 
 			struct dirent * rddir=readdir(inputdir);
+			printf("나임? :%s\n",rddir->d_name);
+
 			struct dirent * outrddir=readdir(outputdir);
+			
+			printf("오류 나임? :%s\n",rddir->d_name);
+
 		
 			if(rddir==NULL){
 				//directory stream 끝에 도달하거나 에러 발생하면 0
@@ -100,10 +105,24 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				printf("폴더명: %s",rddir->d_name);
 			
 				printf("폴더입니다\n");
-			//input 폴더를 복제할 output 폴더를 만든다.
+			
+
+				//폴더 복사를 위해서 재귀함수를 호출한다.
+				
+				char inbuf[1024];
+				char outbuf[1024];
+				
+				sprintf(inbuf,"%s/%s",inputFile,rddir->d_name);
+				sprintf(outbuf,"%s/%s",outputFile,rddir->d_name);
+
+				printf("재귀 함수 호출 - 입력 폴더:%s\n",inbuf);
+				printf("재귀 함수 호출 - 출력 폴더:%s\n",outbuf);
+
+
+				//input 폴더를 복제할 output 폴더를 만든다.
 		 			struct stat buf;
-					stat(rddir->d_name,&buf);
-				int mkdirFlag=mkdir(rddir->d_name,buf.st_mode); 
+					stat(inbuf,&buf);
+				int mkdirFlag=mkdir(outbuf,buf.st_mode); 
 				
 			
 				if(mkdirFlag==0){
@@ -111,7 +130,7 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 					}
 
 				else{
-					printf("폴더명: %s", outputFile);
+					printf("폴더명: %s", outbuf);
 					perror("폴더를 만들지 못하였습니다.\n");
 					printf("%d: %s\n",errno,strerror(errno));
 				
@@ -119,17 +138,9 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 					}
 
 
-				//폴더 복사를 위해서 재귀함수를 호출한다.
-				
-				char inbuf[1024];
-				char outbuf[1024];
-
-				sprintf(inbuf,"%s/%s",inputFile,rddir->d_name);
-				sprintf(outbuf,"%s/%s",outputFile,rddir->d_name);
-
 				DIR* indir=opendir(inbuf);
 				DIR* outdir=opendir(outbuf);
-				
+
 				folderCopy(indir,outdir);
 
 
@@ -142,13 +153,10 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 			
 				//input 폴더의 경로를 설정해준다.
 			
-				//char* inputFile=(rddir->d_name);
-				
-				strcat(inputFile,"/");
-				
+
 				char ref[1024];
 
-				sprintf(ref,"%s%s",inputFile,rddir->d_name);
+				sprintf(ref,"%s/%s",inputFile,rddir->d_name);
 
 
 				printf("%s\n",ref);
@@ -156,8 +164,7 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				
 				char outref[1024];
 
-				strcat(outputFile,"/");
-				sprintf(outref,"%s%s",outputFile,rddir->d_name);
+				sprintf(outref,"%s/%s",outputFile,rddir->d_name);
 				//파일 복사 함수를 호출한다.
 
 				
