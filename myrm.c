@@ -1,10 +1,126 @@
-
-#include <stdlib.h>
-#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include<sys/stat.h>
+#include <dirent.h>
+#include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <pwd.h>
 #include <unistd.h>
+#include <string.h>
+#include <grp.h>
+#define SZ_BUF 1024
+
+void all_rm(int argc,char *argv[])
+{
+        int fd_in,fr;
+        struct stat sbuf;
+        DIR *dirp;
+        struct dirent *dp;
+        char buf[SZ_BUF];
+        mode_t file_mode;
+        int num=0;
+
+        dirp=opendir(".");
+        for(int i=1;i<argc;i++)
+        {
+                  int s=stat(argv[i],&sbuf);
+                  if(s==-1)
+                  {
+                        num=1;
+                        break;
+                  }
+                  file_mode=sbuf.st_mode;
+                  if(!S_ISREG(file_mode))
+                  {
+                        num=2;
+                        break;
+                  }
+        }
+        if(num==1)
+        {
+                printf("There is no file in here!\n");
+                return;
+        }
+        else if(num==2)
+        {
+                printf("Directory name!\n");
+                return;
+        }
+        //remove file
+        for(int i=1;i<argc;i++)
+        {
+                dp=readdir(dirp);
+		if(dp==NULL)
+			break;
+		else
+		{
+			printf("%s\n",dp->d_name);
+                        if(!S_ISREG(file_mode))
+                      		continue;
+			if(strcmp(dp->d_name,"myrm")==0)
+				continue;
+			if(dp->d_name[0]=='.')
+				continue;
+			unlink(dp->d_name);
+		}
+        }
+
+}
+void file_rm(int argc, char * argv[])
+{
+        int fd_in,fr;
+        struct stat sbuf;
+        DIR *dirp;
+        struct dirent *dp;
+        char buf[SZ_BUF];
+        mode_t file_mode;
+        int num=0;
+
+        dirp=opendir(".");
+        for(int i=1;i<argc;i++)
+        {
+                  int s=stat(argv[i],&sbuf);
+                  if(s==-1)
+                  {
+                        num=1;
+                        break;
+                  }
+                   file_mode=sbuf.st_mode;
+                   if(S_ISDIR(file_mode))
+                  {
+                        num=2;
+                        break;
+                  }
+        }
+        if(num==1)
+        {
+                printf("There is no file in here!\n");
+                return;
+        }
+        else if(num==2)
+        {
+                printf("Directory name!\n");
+                return;
+        }
+        //remove file
+        for(int i=1;i<argc;i++)
+		unlink(argv[i]);
+        return;
+}
 int main(int argc, char * argv[])
 {
-	unlink(argv[1]);
+	if(argc==1)
+	{
+		fprintf(stderr,"usage myrm dirname\n");
+		exit(0);
+	}
+	else
+	{
+		if(strcmp(argv[1],"*")==0)
+			all_rm(argc,  argv);
+		else
+			file_rm(argc,argv);
+	}
 	return 0;
 }
