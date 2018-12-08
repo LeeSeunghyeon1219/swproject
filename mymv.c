@@ -62,26 +62,29 @@ void CopyFile(char* inputFile, char* outputFile){
 		if(n<SIZE){
 			fwrite(buf,sizeof(char),n,fw);
 			printf("파일을 다 읽었음\n");
-			//exit(0);
+
+			int val= unlink(inputFile);
+		
+
+			if(val==0){
+				printf("입력 파일 :%s 지우기 성공\n",inputFile);
+			}
+			else{
+				printf("입력 파일 삭제 실패 :%s , 이유 %s\n", inputFile,strerror(errno));
+			}
+			
+			 fclose(fr);
+			 fclose(fw);
+
 			return ;		
 	}
 
 		fwrite(buf,sizeof(char),n,fw);
 	}
 	
-	int val= unlink(inputFile);
-		
-		
+	
+	
 
-	if(val==0){
-		printf("입력 파일 :%s 지우기 성공\n",inputFile);
-	}
-	else{
-		printf("입력 파일 삭제 실패 :%s , 이유 %s\n", inputFile,strerror(errno));
-	}
-
-	 fclose(fr);
-	 fclose(fw);
 
 }
 
@@ -266,11 +269,19 @@ int main(int argc, char *argv[]){
 				
 				int res=folderCopy(inputdir,outputdir);
 				if(res==0){
-					printf("cp실패!\n");
+					printf("mv실패!\n");
 				}
 				else{
-					printf("cp성공!\n");
-				}	}
+					printf("mv성공!\n");
+
+					int val=rmdir(inputFile);
+					if(val==0){
+						printf("입력 폴더 :%s 지우기 성공\n",inputFile);
+					}
+					else{
+						printf("입력 폴더 삭제 실패 :%s , 이유 %s\n", inputFile,strerror(errno));
+					}
+					}	}
 		}
 		
 	return 0;
