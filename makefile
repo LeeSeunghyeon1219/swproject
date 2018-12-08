@@ -1,9 +1,8 @@
 
+.PHONY:all clean
 
 
-mycp: mycp.c
+%.o: %.c
 	gcc -o $@ $<
-
-clean : 
-	rm mycp
-	
+clean:
+	rm -f *.o
