@@ -129,35 +129,16 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				
 				
 				sprintf(inbuf,"%s/%s",inputFile,rddir->d_name);
-				sprintf(outbuf,"%s/%s",outputFile,rddir->d_name);
+				sprintf(outbuf,"%s",outputFile);
 
 				printf("재귀 함수 호출 - 입력 폴더:%s\n",inbuf);
 				printf("재귀 함수 호출 - 출력 폴더:%s\n",outbuf);
 
 
-				//input 폴더를 복제할 output 폴더를 만든다.
-		 			struct stat buf;
-					stat(inbuf,&buf);
-				int mkdirFlag=mkdir(outbuf,buf.st_mode); 
-				
-			
-				if(mkdirFlag==0){
-					printf("output 폴더 만들기 성공하였습니다.\n");
-					//서브 폴더 경로도 붙여주기
-					strcpy(intemp,inputFile);
-					strcpy(outtemp,outputFile);
+				//서브 폴더 경로도 붙여주기
+				strcpy(intemp,inputFile);
 
-					strcpy(inputFile,inbuf);
-					strcpy(outputFile,outbuf);
-					}
-
-				else{
-					printf("폴더명: %s", outbuf);
-					perror("폴더를 만들지 못하였습니다.\n");
-					printf("%d: %s\n",errno,strerror(errno));
-				
-					return 0;
-					}
+				strcpy(inputFile,inbuf);
 
 
 				DIR* indir=opendir(inbuf);
@@ -177,8 +158,6 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				}
 
 				strcpy(inputFile,intemp);
-				strcpy(outputFile,outtemp);
-				
 
 				}}
 		else if(rddir->d_type==DT_REG){
@@ -200,7 +179,7 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				
 				char outref[1024];
 
-				sprintf(outref,"%s/%s",outputFile,rddir->d_name);
+				sprintf(outref,"%s",outputFile);
 				//파일 복사 함수를 호출한다.
 
 				
@@ -224,13 +203,64 @@ int main(int argc, char *argv[]){
 	}
 
 	if(argc==4){
+
+		if(strcmp(argv[1],"-m")==0){
+
+			//파일이나 폴더를 폴더 안으로 이동 시키기
+
+			
+			DIR* inputdir;
+			inputdir=opendir(argv[2]); //input 폴더를 연다
+	
+			//input 폴더를 읽는다 
+			
+			// output 폴더를 연다.
+		 	
+
+				DIR* outputdir;
+				outputdir=opendir(argv[3]);
+				
+				inputFile[0]='\0';
+
+				strcat(inputFile,"./");
+				
+				strcat(inputFile,argv[2]);
+				
+				outputFile[0]='\0';
+
+				strcat(outputFile,"./");
+
+				strcat(outputFile,argv[3]);
+				
+				int res=folderCopy(inputdir,outputdir);
+				if(res==0){
+					printf("mv실패!\n");
+				}
+				else{
+					printf("mv성공!\n");
+
+					int val=rmdir(inputFile);
+					if(val==0){
+						printf("입력 폴더 :%s 지우기 성공\n",inputFile);
+					}
+					else{
+						printf("입력 폴더 삭제 실패 :%s , 이유 %s\n", inputFile,strerror(errno));
+					}
+					}	}
+
+
+	}
+
+	if(argc==4){
 		if(strcmp(argv[1],"-r")==0){
+			//파일이나 폴더의 이름을 바꾸기
+
 			printf("폴더복사\n");
 			
 			DIR* inputdir;
 			inputdir=opendir(argv[2]); //input 폴더를 연다
 	
-			//input폴더를 읽는nB NC 다 
+			//input폴더를 읽는다 
 			
 			//input 폴더를 복제할 output 폴더를 만든다.
 		 	struct stat buf;
