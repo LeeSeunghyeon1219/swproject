@@ -14,6 +14,7 @@
 #define NUM_OF_TOKENS 10
 int mycat(int argc, char * argv[])
 {
+
         int fd_in,fr;
         struct stat sbuf;
         DIR *dirp;
