@@ -64,6 +64,10 @@ int mycat(int argc, char * argv[])
         }
 
 }
+void print(int argc, char *argv[])
+{
+	printf("%s"
+}
 int main(void)
 {
 	char cmdString[STR_LEN];
