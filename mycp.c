@@ -16,8 +16,13 @@
 char inputFile[50];
 char outputFile[50];
 				
+char inbuf[1024];
+char outbuf[1024];
+				
 
-
+char intemp[1024];							
+char outtemp[1024];
+				
 		
 void CopyFile(char* inputFile, char* outputFile){
 
@@ -75,7 +80,9 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 			while(1){
 
 			struct dirent * rddir=readdir(inputdir);
+			
 			struct dirent * outrddir=readdir(outputdir);
+			
 		
 			if(rddir==NULL){
 				//directory stream 끝에 도달하거나 에러 발생하면 0
@@ -94,24 +101,44 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				//do nothing.
 				}
 
+				
+
 				else{
 
 
 				printf("폴더명: %s",rddir->d_name);
 			
 				printf("폴더입니다\n");
-			//input 폴더를 복제할 output 폴더를 만든다.
+			
+
+				//폴더 복사를 위해서 재귀함수를 호출한다.
+				
+				
+				sprintf(inbuf,"%s/%s",inputFile,rddir->d_name);
+				sprintf(outbuf,"%s/%s",outputFile,rddir->d_name);
+
+				printf("재귀 함수 호출 - 입력 폴더:%s\n",inbuf);
+				printf("재귀 함수 호출 - 출력 폴더:%s\n",outbuf);
+
+
+				//input 폴더를 복제할 output 폴더를 만든다.
 		 			struct stat buf;
-					stat(rddir->d_name,&buf);
-				int mkdirFlag=mkdir(rddir->d_name,buf.st_mode); 
+					stat(inbuf,&buf);
+				int mkdirFlag=mkdir(outbuf,buf.st_mode); 
 				
 			
 				if(mkdirFlag==0){
 					printf("output 폴더 만들기 성공하였습니다.\n");
+					//서브 폴더 경로도 붙여주기
+					strcpy(intemp,inputFile);
+					strcpy(outtemp,outputFile);
+
+					strcpy(inputFile,inbuf);
+					strcpy(outputFile,outbuf);
 					}
 
 				else{
-					printf("폴더명: %s", outputFile);
+					printf("폴더명: %s", outbuf);
 					perror("폴더를 만들지 못하였습니다.\n");
 					printf("%d: %s\n",errno,strerror(errno));
 				
@@ -119,7 +146,15 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 					}
 
 
-				//폴더 복사를 위해서 재귀함수를 호출한다.
+				DIR* indir=opendir(inbuf);
+				DIR* outdir=opendir(outbuf);
+
+				folderCopy(indir,outdir);
+				
+				//재귀함수 빠져나오면 서브 폴더 경로 빼주기
+				strcpy(inputFile,intemp);
+				strcpy(outputFile,outtemp);
+
 
 				}}
 		else if(rddir->d_type==DT_REG){
@@ -130,19 +165,22 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 			
 				//input 폴더의 경로를 설정해준다.
 			
-				//char* inputFile=(rddir->d_name);
-				
-				strcat(inputFile,"/");
-				strcat(inputFile,rddir->d_name);
 
-				printf("%s\n",inputFile);
+				char ref[1024];
+
+				sprintf(ref,"%s/%s",inputFile,rddir->d_name);
+
+
+				printf("%s\n",ref);
 				//output 폴더의 경로를 설정해준다.
+				
+				char outref[1024];
 
-				strcat(outputFile,"/");
-				strcat(outputFile,rddir->d_name);
-
+				sprintf(outref,"%s/%s",outputFile,rddir->d_name);
 				//파일 복사 함수를 호출한다.
-				CopyFile(inputFile,outputFile);
+
+				
+				CopyFile(ref,outref);
 			}
 	}
 	return 1;
