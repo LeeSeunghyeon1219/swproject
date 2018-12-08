@@ -22,7 +22,9 @@ char outbuf[1024];
 
 char intemp[1024];							
 char outtemp[1024];
-				
+
+char buf[1024];
+		
 		
 void CopyFile(char* inputFile, char* outputFile){
 
@@ -225,7 +227,31 @@ int main(int argc, char *argv[]){
 	}
 	
 	if(argc==3){
+
+		//argv[1]은 입력파일 이고 argv[2]는 출력 폴더인지 출력 파일인지 확인한다.
+		struct stat sb;
+		stat(argv[2],&sb);
+		
+		switch(sb.st_mode & S_IFMT){
+
+		case S_IFREG:
+		//argv[2]가 출력 파일일 경우... 
+		//파일의 이름을 바꾸는 것이 됨!
 		CopyFile(argv[1],argv[2]); 
+
+		break;
+
+		case S_IFDIR:
+
+		//argv[2]가 출력 폴더일 경우
+		//argv[2] 폴더 밑에 argv[1] 파일을 만듦
+		
+		sprintf(buf,"./%s/%s",argv[2],argv[1]);
+		fopen(buf,"w+");
+		CopyFile(argv[1],buf);
+
+		break;
+}
 	}
 
 
@@ -353,9 +379,9 @@ int main(int argc, char *argv[]){
 					else{
 						printf("입력 폴더 삭제 실패 :%s , 이유 %s\n", inputFile,strerror(errno));
 					}
-					}	}
+					}	
 		}
-		
+		}
 	return 0;
 
 }
