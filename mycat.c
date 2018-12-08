@@ -30,7 +30,7 @@ void mycat(int argc, char *argv[])
                         break;
                   }
                    file_mode=sbuf.st_mode;
-                   if(S_ISDIR(file_mode))
+                   if(!S_ISREG(file_mode))
                   {
                         num=2;
                         break;
