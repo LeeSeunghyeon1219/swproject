@@ -55,8 +55,9 @@ void all_rm(int argc,char *argv[])
 			break;
 		else
 		{
-			printf("%s\n",dp->d_name);
-                        if(!S_ISREG(file_mode))
+        	       	stat(argv[i],&sbuf);
+		     	file_mode=sbuf.st_mode;
+	          	if(!S_ISREG(file_mode))
                       		continue;
 			if(strcmp(dp->d_name,"myrm")==0)
 				continue;
@@ -65,7 +66,38 @@ void all_rm(int argc,char *argv[])
 			unlink(dp->d_name);
 		}
         }
+}
+int dir_rm(char *path, int is_error_stop)
+{
+	DIR *dir_ptr=NULL;
+	struct dirent *file=NULL;
+	struct stat buf;
+	char filename[1024]="";
 
+	if((dir_ptr=opendir(path))==NULL)
+	{
+			return unlink(path);
+	}
+	while((file=readdir(dir_ptr))!=NULL)
+	{
+                if(file->d_name[0]=='.')
+                        continue;
+		sprintf(filename,"%s/%s",path,file->d_name);
+		if(lstat(filename,&buf)==-1)
+			continue;
+		if(S_ISDIR(buf.st_mode))
+		{
+			if(dir_rm(filename,is_error_stop)==-1&&is_error_stop)
+				return -1;
+		}
+		else if(S_ISREG(buf.st_mode)||S_ISLNK(buf.st_mode))
+		{
+			if(unlink(filename)==-1&&is_error_stop)
+				return -1;
+		}	
+	}
+	closedir(dir_ptr);
+	return rmdir(path);
 }
 void file_rm(int argc, char * argv[])
 {
@@ -110,6 +142,7 @@ void file_rm(int argc, char * argv[])
 }
 int main(int argc, char * argv[])
 {
+	int num=0;
 	if(argc==1)
 	{
 		fprintf(stderr,"usage myrm dirname\n");
@@ -119,6 +152,8 @@ int main(int argc, char * argv[])
 	{
 		if(strcmp(argv[1],"*")==0)
 			all_rm(argc,  argv);
+		else if(strcmp(argv[1],"-r")==0)
+			return dir_rm(argv[2],1);
 		else
 			file_rm(argc,argv);
 	}
