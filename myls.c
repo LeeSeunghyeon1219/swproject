@@ -181,8 +181,8 @@ void opendirp_all(DIR * dirp)
                 }
 	}
 }
- int main(int argc, char *argv[])
- {
+int main(int argc, char *argv[]) 
+{
  	int num=0;
  	struct stat sbuf;
  	DIR *dirp;
@@ -207,8 +207,6 @@ void opendirp_all(DIR * dirp)
  			num=2;
  		else if(strcmp(argv[1],"-al")==0|strcmp(argv[1],"-all")==0)
  			num=3;
-		else if(strcmp(argv[1],"-R")==0)
-			num=4;
   	}
 	else if(argc==3)
 	{
@@ -257,8 +255,5 @@ void opendirp_all(DIR * dirp)
 	        sortSLL();
         	showSLL_list();
 	}	
-	else if(num==4)
-	{
-		R_option(dirp);
-	}
+	
 } 

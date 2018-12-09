@@ -22,31 +22,6 @@ void all_rm(int argc,char *argv[])
         int num=0;
 
         dirp=opendir(".");
-        for(int i=1;i<argc;i++)
-        {
-                  int s=stat(argv[i],&sbuf);
-                  if(s==-1)
-                  {
-                        num=1;
-                        break;
-                  }
-                  file_mode=sbuf.st_mode;
-                  if(!S_ISREG(file_mode))
-                  {
-                        num=2;
-                        break;
-                  }
-        }
-        if(num==1)
-        {
-                printf("There is no file in here!\n");
-                return;
-        }
-        else if(num==2)
-        {
-                printf("Directory name!\n");
-                return;
-        }
         //remove file
         for(int i=1;i<argc;i++)
         {
@@ -108,11 +83,16 @@ void file_rm(int argc, char * argv[])
         char buf[SZ_BUF];
         mode_t file_mode;
         int num=0;
-
+	int ch=0;
         dirp=opendir(".");
         for(int i=1;i<argc;i++)
         {
-                  int s=stat(argv[i],&sbuf);
+                if(argv[i][0]=='*')
+		{
+			ch=1; 
+			continue; 
+		}
+		int s=stat(argv[i],&sbuf);
                   if(s==-1)
                   {
                         num=1;
@@ -137,10 +117,43 @@ void file_rm(int argc, char * argv[])
         }
         //remove file
         for(int i=1;i<argc;i++)
+	{
+                if(strcmp(argv[i],"*")==0)
+			continue; 
 		unlink(argv[i]);
+	}
+	if(ch==1)
+	{
+		for(int i=1;i<argc;i++)
+		{
+		        dirp=opendir(".");
+			char *ptr;
+                	if(argv[i][0]!='*')
+                		continue;
+			else
+			{
+				ptr=strtok(argv[1],".");
+				ptr=strtok(NULL," ");
+				for(;;)
+				{
+					dp=readdir(dirp);
+					if(dp==NULL)
+						break;
+					else
+					{
+						char *ptr1=strtok(dp->d_name,".");
+						ptr1=strtok(NULL," ");
+						if(strcmp(ptr1,ptr)==0)
+							unlink(dp->d_name);
+					}
+				}
+			}
+			
+		}
+	}
         return;
 }
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
 	int num=0;
 	if(argc==1)
@@ -151,7 +164,7 @@ int main(int argc, char * argv[])
 	else
 	{
 		if(strcmp(argv[1],"*")==0)
-			all_rm(argc,  argv);
+			all_rm(argc,argv);
 		else if(strcmp(argv[1],"-r")==0)
 			return dir_rm(argv[2],1);
 		else
