@@ -1,62 +1,12 @@
-	
-		
-void CopyFile(char* inputFile, char* outputFile){
+#include "../include/mymv.h"
 
-//파일 복사하기
-	printf("파일 복사\n");
-	printf("inputFile: %s, outputFile: %s \n",inputFile,outputFile);
-	struct stat frstatbuf;
-	FILE* fr=fopen(inputFile,"r");
-	
-	if(fr==NULL){
-		perror("read file 읽기 오류\n");
-		exit(0);
-	}
 
-	int frfd=fileno(fr);
-
-	fstat(frfd,&frstatbuf);
-
-	FILE* fw=fopen(outputFile,"w+");
-
-	
-	if(fw==NULL){
-		perror("write file 열기 오류\n");
-		exit(0);
-	}
-
-	int fwfd=fileno(fw);
-
-	fchmod(fwfd,frstatbuf.st_mode);
-	
-	
-	char buf[1024];
-
-	while(1){
-		int n=fread(buf,sizeof(char),SIZE,fr);
-
-		if(n<SIZE){
-			fwrite(buf,sizeof(char),n,fw);
-			printf("파일을 다 읽었음\n");
-			//exit(0);
-			return ;		
-	}
-
-		fwrite(buf,sizeof(char),n,fw);
-	}
-	
-	 fclose(fr);
-	 fclose(fw);
-
-}
-
-int folderCopy(DIR* inputdir,DIR* outputdir){
+int MVfolderCopy(DIR* inputdir,DIR* outputdir){
 
 
 			while(1){
 
 			struct dirent * rddir=readdir(inputdir);
-			
 			struct dirent * outrddir=readdir(outputdir);
 			
 		
@@ -114,23 +64,38 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 					}
 
 				else{
-					printf("폴더명: %s", outbuf);
+					printf("폴더명: %s\n", outbuf);
 					perror("폴더를 만들지 못하였습니다.\n");
-					printf("%d: %s\n",errno,strerror(errno));
+					printf("%s\n",strerror(errno));
 				
-					return 0;
+					strcpy(intemp,inputFile);
+					strcpy(outtemp,outputFile);
+
+					strcpy(inputFile,inbuf);
+					strcpy(outputFile,outbuf);
+					
 					}
 
 
 				DIR* indir=opendir(inbuf);
 				DIR* outdir=opendir(outbuf);
 
-				folderCopy(indir,outdir);
+				MVfolderCopy(indir,outdir);
 				
 				//재귀함수 빠져나오면 서브 폴더 경로 빼주기
+				
+				//mv이므로 입력파일의 subdirectory 삭제
+				int val=rmdir(inputFile);
+				if(val==0){
+					printf("입력 폴더 :%s 지우기 성공\n",inputFile);
+				}
+				else{
+					printf("입력 폴더 삭제 실패 :%s , 이유 %s\n", inputFile,strerror(errno));
+				}
+
 				strcpy(inputFile,intemp);
 				strcpy(outputFile,outtemp);
-
+				
 
 				}}
 		else if(rddir->d_type==DT_REG){
@@ -156,7 +121,7 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 				//파일 복사 함수를 호출한다.
 
 				
-				CopyFile(ref,outref);
+				MVFile(ref,outref);
 			}
 	}
 	return 1;
@@ -164,71 +129,3 @@ int folderCopy(DIR* inputdir,DIR* outputdir){
 }
 
 
-int main(int argc, char *argv[]){
-
-	if(argc<3){
-		perror("argument 부족\n");
-		exit(0);
-	}
-	
-	if(argc==3){
-		CopyFile(argv[1],argv[2]); 
-	}
-
-	if(argc==4){
-		if(strcmp(argv[1],"-r")==0){
-			printf("폴더복사\n");
-			
-			DIR* inputdir;
-			inputdir=opendir(argv[2]); //input 폴더를 연다
-	
-			//input폴더를 읽는다 
-			
-			//input 폴더를 복제할 output 폴더를 만든다.
-		 	struct stat buf;
-			stat(argv[2],&buf);
-			int mkdirFlag=mkdir(argv[3],buf.st_mode); 
-
-
-
-			if(mkdirFlag==0){
-				printf("output 폴더 만들기 성공하였습니다.\n");
-				
-			}
-
-			else{
-				perror("폴더를 만들지 못하였습니다.\n");
-				printf("%d: %s\n",errno,strerror(errno));
-				
-				exit(0);
-			}
-
-
-				DIR* outputdir;
-				outputdir=opendir(argv[3]);
-				
-				inputFile[0]='\0';
-
-				strcat(inputFile,"./");
-				
-				strcat(inputFile,argv[2]);
-				
-				outputFile[0]='\0';
-
-				strcat(outputFile,"./");
-
-				strcat(outputFile,argv[3]);
-				
-				int res=folderCopy(inputdir,outputdir);
-				if(res==0){
-					printf("cp실패!\n");
-				}
-				else{
-					printf("cp성공!\n");
-				}	}
-		}
-		
-	return 0;
-
-}
-	
