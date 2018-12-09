@@ -1,7 +1,7 @@
 
 .PHONY:all clean
 
-all: mycp mymv
+all: mycp mymv 
 
 %.o: %.c
 	gcc -o $@ $<

@@ -9,7 +9,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <grp.h>
+#include "mycat.h"
 #define SZ_BUF 1024
+
 void mycat(int argc, char *argv[])
 {
         int fd_in,fr;
@@ -54,21 +56,4 @@ void mycat(int argc, char *argv[])
                         printf("%s",buf);
         }
 	return;
-}
-int main(int argc, char * argv[])
-{
-	int fd_in,fr;
-	struct stat sbuf;
-	DIR *dirp;
-	struct dirent *dp;
-	char buf[SZ_BUF];
-	mode_t file_mode;
-	int num=0;
-	if(argc==1)
-	{
-		fprintf(stderr,"usage mycat dirname\n");
- 		exit(0);
- 	}
-	else
-		mycat(argc, argv);
 }
